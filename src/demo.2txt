@@ -1,0 +1,166 @@
+import React, { useEffect, useState } from "react";
+import { Container, TextField, Typography, Stack, Box } from "@mui/material";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import Button from "@mui/material/Button";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import BasicCard from "./Components/Card";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+function App() {
+  const [data, setData] = useState({
+    title: "",
+    description: "",
+    status: "",
+  });
+  const [todo, setTodo] = useState({
+    todo: [],
+    doing: [],
+    done: [],
+  });
+  const handleData = (e) => {
+    const { name, value } = e.target;
+    setData((prev) => ({ ...prev, [name]: value }));
+  };
+  const handleSubmitData = () => {
+    setData({ description: "", title: "", status: "" });
+
+    if (data.status === "Todo") {
+      setTodo((prevTodo) => ({
+        ...prevTodo,
+        todo: [...prevTodo.todo, data],
+      }));
+    } else if (data.status === "Doing") {
+      setTodo((prevTodo) => ({
+        ...prevTodo,
+        doing: [...prevTodo.doing, data],
+      }));
+    } else if (data.status === "Done") {
+      setTodo((prevTodo) => ({
+        ...prevTodo,
+        done: [...prevTodo.done, data],
+      }));
+    }
+  };
+  console.log(todo);
+  return (
+    <>
+      <Container>
+        <Typography variant="h3" textAlign="center">
+          Todo List
+        </Typography>
+        <Box
+          component="form"
+          sx={{
+            "& > :not(style)": { m: 1, width: "25ch", height: "50px" },
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+          noValidate
+          autoComplete="off"
+        >
+          <TextField
+            id="outlined-basic"
+            label="title"
+            variant="outlined"
+            value={data.title}
+            name="title"
+            onChange={handleData}
+          />
+          <TextField
+            id="outlined-basic"
+            label="description"
+            variant="outlined"
+            name="description"
+            value={data.description}
+            onChange={handleData}
+          />
+          <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label">Status</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              label="Status"
+              name="status"
+              value={data.status}
+              onChange={handleData}
+            >
+              <MenuItem value={"Todo"}>Todo</MenuItem>
+              <MenuItem value={"Doing"}>Doing</MenuItem>
+              <MenuItem value={"Done"}>Done</MenuItem>
+            </Select>
+          </FormControl>
+          <Button
+            variant="contained"
+            endIcon={<ArrowForwardIcon />}
+            size="large"
+            onClick={handleSubmitData}
+          >
+            Send
+          </Button>
+        </Box>
+        <DragDropContext>
+          <Box display="flex" justifyContent="center" gap={3} mt={3}>
+            <Droppable droppableId="todo">
+              {(provided) => (
+                <Stack
+                  gap={2}
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                >
+                  <Typography textAlign="center" variant="h5">
+                    Todo Task
+                  </Typography>
+                  {todo.todo.map(({ title, description, status }, index) => {
+                    return (
+                      <Draggable key={index} draggableId="todo" index={index}>
+                        {(provided) => (
+                          <Box
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                          >
+                            <BasicCard
+                              title={title}
+                              desc={description}
+                              status={status}
+                            />
+                          </Box>
+                        )}
+                      </Draggable>
+                    );
+                  })}
+                  {provided.placeholder}
+                </Stack>
+              )}
+            </Droppable>
+            <Stack gap={2}>
+              <Typography textAlign="center" variant="h5">
+                Doing Task
+              </Typography>
+              {todo.doing.map(({ title, description, status }) => {
+                return (
+                  <BasicCard title={title} desc={description} status={status} />
+                );
+              })}
+            </Stack>
+            <Stack gap={2}>
+              <Typography textAlign="center" variant="h5">
+                Done Task
+              </Typography>
+              {todo.done.map(({ title, description, status }) => {
+                return (
+                  <BasicCard title={title} desc={description} status={status} />
+                );
+              })}
+            </Stack>
+          </Box>
+        </DragDropContext>
+      </Container>
+    </>
+  );
+}
+
+export default App;
