@@ -225,7 +225,8 @@ function App() {
               sx={{
                 background: "gray",
                 p: "10px",
-                width: "25%",
+                maxWidth: 250,
+                minWidth: 150,
                 height: "fit-content",
               }}
             >
@@ -270,7 +271,8 @@ function App() {
               sx={{
                 background: "gray",
                 p: "10px",
-                width: "25%",
+                maxWidth: 250,
+                minWidth: 150,
                 height: "fit-content",
               }}
             >
